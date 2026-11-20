@@ -17,7 +17,7 @@
         <div>
             <div class="sidebar-brand">
                 <span>🍜</span>
-                <span>Mì Cay Seoul 7 Cấp</span>
+                <span>nhóm 3</span>
             </div>
 
             <div class="sidebar-admin">
