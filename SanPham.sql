@@ -126,6 +126,16 @@ CREATE TABLE NHAT_KI_HOAT_DONG (
     CONSTRAINT FK_NK_NhanVien FOREIGN KEY (ma_nhan_vien) REFERENCES NHAN_VIEN(ma_nhan_vien)
 );
 GO
+CREATE TABLE BAN_MON (
+    ma_ban_mon INT IDENTITY(1,1) PRIMARY KEY,
+    ma_ban INT NOT NULL,
+    ma_san_pham INT NOT NULL,
+    so_luong INT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_BM_Ban FOREIGN KEY (ma_ban) REFERENCES BAN(ma_ban) ON DELETE CASCADE,
+    CONSTRAINT FK_BM_SanPham FOREIGN KEY (ma_san_pham) REFERENCES SAN_PHAM(ma_san_pham),
+    CONSTRAINT CK_BM_SoLuong CHECK (so_luong > 0),
+    CONSTRAINT UQ_BM_Ban_SanPham UNIQUE (ma_ban, ma_san_pham)
+);
 INSERT INTO SAN_PHAM (ten_san_pham, gia_tien, anh_san_pham, mo_ta, trang_thai)
 VALUES
 (N'Mì cay bò', 45000, '/image/mi-cay-bo.pgn', N'Mì cay bò thơm ngon', 1),
