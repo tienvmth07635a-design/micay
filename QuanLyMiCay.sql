@@ -126,3 +126,47 @@ CREATE TABLE NHAT_KI_HOAT_DONG (
     CONSTRAINT FK_NK_NhanVien FOREIGN KEY (ma_nhan_vien) REFERENCES NHAN_VIEN(ma_nhan_vien)
 );
 GO
+INSERT INTO SAN_PHAM (ten_san_pham, gia_tien, anh_san_pham, mo_ta, trang_thai)
+VALUES
+(N'Mì cay bò', 45000, '/image/mi-cay-bo.pgn', N'Mì cay bò thơm ngon', 1),
+(N'Mì cay hải sản', 50000, '/image/mi-hai-san.png', N'Mì cay hải sản tươi ngon', 1),
+(N'Mì cay xúc xích', 40000, '/image/mi-xuc-xich.png', N'Mì cay xúc xích', 1),
+(N'Mì cay thập cẩm', 55000, '/image/mi-thap-cam.png', N'Mì cay thập cẩm đặc biệt', 1),
+(N'Mì cay kim chi', 45000, '/image/mi-kim-chi.png', N'Mì cay kim chi Hàn Quốc', 1);
+GO
+
+UPDATE SAN_PHAM
+SET trang_thai = 0
+WHERE ma_san_pham = 1;
+
+UPDATE SAN_PHAM
+SET trang_thai = 1
+WHERE ma_san_pham = 1;
+
+
+SELECT ma_san_pham, ten_san_pham, anh_san_pham
+FROM SAN_PHAM;
+
+UPDATE SAN_PHAM
+SET anh_san_pham = '/image/mi-cay-bo.png'
+WHERE ten_san_pham = N'Mì cay bò';
+
+UPDATE SAN_PHAM
+SET anh_san_pham = '/image/mi-hai-san.png'
+WHERE ten_san_pham = N'Mì cay hải sản';
+
+UPDATE SAN_PHAM
+SET anh_san_pham = '/image/mi-xuc-xich.png'
+WHERE ten_san_pham = N'Mì cay xúc xích';
+
+UPDATE SAN_PHAM
+SET anh_san_pham = '/image/mi-thap-cam.png'
+WHERE ten_san_pham = N'Mì cay thập cẩm';
+
+UPDATE SAN_PHAM
+SET anh_san_pham = '/image/mi-kim-chi.png'
+WHERE ten_san_pham = N'Mì cay kim chi';
+
+SELECT TOP 5 ma_san_pham, ten_san_pham, anh_san_pham
+FROM SAN_PHAM
+ORDER BY ma_san_pham DESC;
