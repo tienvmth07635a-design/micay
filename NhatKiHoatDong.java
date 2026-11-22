@@ -33,11 +33,11 @@ public class NhatKiHoatDong {
     @Transient
     private String tenNhanVienHienThi;
 
-    // JSP gọi bằng ${nk.thoiGianFormatted}
+    // JSP gọi bằng ${nk.thoiGianFormatted} -> 16/11/2026 - 15:30:12
     public String getThoiGianFormatted() {
         if (thoiGian == null) {
             return "";
         }
-        return thoiGian.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        return thoiGian.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss"));
     }
 }
