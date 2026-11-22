@@ -19,6 +19,7 @@ public class NhatKiHoatDongRepository {
         return HibernateConfig.getSessionFactory().openSession();
     }
 
+    // Lấy danh sách nhật kí (mới nhất lên đầu), có thể tìm theo từ khóa
     public List<NhatKiHoatDong> findAll(String keyword) {
         try (Session session = openSession()) {
             boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
@@ -61,7 +62,7 @@ public class NhatKiHoatDongRepository {
         }
     }
 
-    // Chức năng khác gọi hàm này để ghi nhật kí.
+    // Các chức năng khác gọi hàm này để ghi nhật kí.
     // Ví dụ: new NhatKiHoatDongRepository().ghiNhatKy(1, "Thêm món: Mì cay cấp 3");
     public void ghiNhatKy(Integer maNhanVien, String hanhDong) {
         Transaction tx = null;
