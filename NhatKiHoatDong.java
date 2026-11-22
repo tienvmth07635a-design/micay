@@ -29,9 +29,11 @@ public class NhatKiHoatDong {
     @Column(name = "ma_nhan_vien")
     private Integer maNhanVien;
 
+    // Không lưu xuống DB, chỉ dùng để hiển thị trên JSP
     @Transient
     private String tenNhanVienHienThi;
 
+    // JSP gọi bằng ${nk.thoiGianFormatted}
     public String getThoiGianFormatted() {
         if (thoiGian == null) {
             return "";
