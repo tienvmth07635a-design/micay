@@ -33,7 +33,9 @@ public class NhatKiHoatDong {
     private String tenNhanVienHienThi;
 
     public String getThoiGianFormatted() {
-        if (thoiGian == null) return "";
-        return thoiGian.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss"));
+        if (thoiGian == null) {
+            return "";
+        }
+        return thoiGian.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 }
