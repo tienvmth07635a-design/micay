@@ -11,13 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "NhatKiHoatDongServletServlet", value = "/NhatKiHoatDongServlet-servlet")
+@WebServlet(name = "NhatKiHoatDongServlet", value = "/nhat-ki")
 public class NhatKiHoatDongServlet extends HttpServlet {
 
     private final NhatKiHoatDongRepository repo = new NhatKiHoatDongRepository();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
@@ -27,11 +28,13 @@ public class NhatKiHoatDongServlet extends HttpServlet {
         request.setAttribute("dsNhatKy", dsNhatKy);
         request.setAttribute("keyword", keyword);
 
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        // Forward tới trang riêng, KHÔNG phải index.jsp
+        request.getRequestDispatcher("/jsp/nhat_ki.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         doGet(request, response);
     }
 }
