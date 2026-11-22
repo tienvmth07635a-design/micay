@@ -8,19 +8,17 @@ import org.hibernate.query.Query;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NhatKiHoatDongRepository {
 
-    private static final int MA_ADMIN = 1;
-
     // Chỗ DUY NHẤT phụ thuộc cách kết nối của nhóm.
-    // Nếu nhóm dùng class khác thì chỉ sửa dòng return bên dưới.
     private Session openSession() {
         return HibernateConfig.getSessionFactory().openSession();
     }
 
-    // Lấy danh sách nhật kí, có thể tìm theo từ khóa (hành động hoặc mã nhật kí)
     public List<NhatKiHoatDong> findAll(String keyword) {
         try (Session session = openSession()) {
             boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
@@ -36,13 +34,24 @@ public class NhatKiHoatDongRepository {
             if (hasKeyword) {
                 query.setParameter("kw", "%" + keyword.trim().toLowerCase() + "%");
             }
-
             List<NhatKiHoatDong> list = query.list();
+
+            // Lấy chức vụ từ bảng NHAN_VIEN để hiển thị
+            Map<Integer, String> chucVu = new HashMap<>();
+            List<Object[]> rows = session
+                    .createNativeQuery("SELECT ma_nhan_vien, chuc_vu FROM NHAN_VIEN", Object[].class)
+                    .list();
+            for (Object[] r : rows) {
+                chucVu.put(((Number) r[0]).intValue(), (String) r[1]);
+            }
+
             for (NhatKiHoatDong nk : list) {
-                if (nk.getMaNhanVien() == null || nk.getMaNhanVien() == MA_ADMIN) {
-                    nk.setTenNhanVienHienThi("Quản lý / Admin");
+                Integer ma = nk.getMaNhanVien();
+                if (ma == null) {
+                    nk.setTenNhanVienHienThi("Không xác định");
                 } else {
-                    nk.setTenNhanVienHienThi("Nhân viên #" + nk.getMaNhanVien());
+                    String cv = chucVu.get(ma);
+                    nk.setTenNhanVienHienThi(cv != null ? cv + " (#" + ma + ")" : "Nhân viên #" + ma);
                 }
             }
             return list;
@@ -52,8 +61,8 @@ public class NhatKiHoatDongRepository {
         }
     }
 
-    // Các chức năng khác của nhóm gọi hàm này để ghi nhật kí
-    // Ví dụ: new NhatKiHoatDongRepository().ghiNhatKy(1, "Thêm sản phẩm: Mì cay cấp độ 3");
+    // Chức năng khác gọi hàm này để ghi nhật kí.
+    // Ví dụ: new NhatKiHoatDongRepository().ghiNhatKy(1, "Thêm món: Mì cay cấp 3");
     public void ghiNhatKy(Integer maNhanVien, String hanhDong) {
         Transaction tx = null;
         try (Session session = openSession()) {
