@@ -1,6 +1,7 @@
 package com.example.quanlyquanmicay.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BanMon {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_ban_mon")
@@ -19,14 +22,9 @@ public class BanMon {
     @Column(name = "ma_ban", nullable = false)
     private Integer maBan;
 
-    @Column(name = "ten_mon", nullable = false, length = 255)
-    private String tenMon;
+    @Column(name = "ma_san_pham", nullable = false)
+    private Integer maSanPham;
 
     @Column(name = "so_luong", nullable = false)
     private Integer soLuong;
-
-    public BanMon(String tenMon, Integer soLuong) {
-        this.tenMon = tenMon;
-        this.soLuong = soLuong;
-    }
 }
