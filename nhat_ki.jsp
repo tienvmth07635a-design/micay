@@ -167,6 +167,7 @@
                     </tr>
                     </thead>
                     <tbody>
+                    <%-- Các dòng này tự xuất hiện khi chức năng khác gọi ghiNhatKy(...) --%>
                     <c:choose>
                         <c:when test="${empty dsNhatKy}">
                             <tr><td colspan="4" class="nk-empty">Chưa có dữ liệu</td></tr>
