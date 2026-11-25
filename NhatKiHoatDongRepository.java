@@ -15,11 +15,12 @@ import java.util.Map;
 public class NhatKiHoatDongRepository {
 
     // Chỗ DUY NHẤT phụ thuộc cách kết nối của nhóm.
+    // Nếu nhóm trưởng dùng cách khác thì chỉ sửa dòng return này.
     private Session openSession() {
         return HibernateConfig.getSessionFactory().openSession();
     }
 
-    // Lấy danh sách nhật kí (mới nhất lên đầu), có thể tìm theo từ khóa
+    // ===== ĐỌC: chỉ SELECT, không sửa gì trong database của nhóm =====
     public List<NhatKiHoatDong> findAll(String keyword) {
         try (Session session = openSession()) {
             boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
@@ -37,14 +38,8 @@ public class NhatKiHoatDongRepository {
             }
             List<NhatKiHoatDong> list = query.list();
 
-            // Lấy chức vụ từ bảng NHAN_VIEN để hiển thị
-            Map<Integer, String> chucVu = new HashMap<>();
-            List<Object[]> rows = session
-                    .createNativeQuery("SELECT ma_nhan_vien, chuc_vu FROM NHAN_VIEN", Object[].class)
-                    .list();
-            for (Object[] r : rows) {
-                chucVu.put(((Number) r[0]).intValue(), (String) r[1]);
-            }
+            // Tra chức vụ riêng: nếu lỗi thì chỉ mất tên hiển thị, KHÔNG mất danh sách
+            Map<Integer, String> chucVu = layChucVu(session);
 
             for (NhatKiHoatDong nk : list) {
                 Integer ma = nk.getMaNhanVien();
@@ -62,22 +57,48 @@ public class NhatKiHoatDongRepository {
         }
     }
 
-    // Các chức năng khác gọi hàm này để ghi nhật kí.
+    // Đọc chức vụ từ bảng NHAN_VIEN có sẵn (chỉ SELECT)
+    private Map<Integer, String> layChucVu(Session session) {
+        Map<Integer, String> map = new HashMap<>();
+        try {
+            List<Object[]> rows = session
+                    .createNativeQuery("SELECT ma_nhan_vien, chuc_vu FROM NHAN_VIEN", Object[].class)
+                    .list();
+            for (Object[] r : rows) {
+                map.put(((Number) r[0]).intValue(), (String) r[1]);
+            }
+        } catch (Exception e) {
+            System.out.println("Khong lay duoc chuc vu nhan vien: " + e.getMessage());
+        }
+        return map;
+    }
+
+    // ===== GHI: các chức năng khác của nhóm gọi các hàm này =====
+
     // Ví dụ: new NhatKiHoatDongRepository().ghiNhatKy(1, "Thêm món: Mì cay cấp 3");
     public void ghiNhatKy(Integer maNhanVien, String hanhDong) {
-        Transaction tx = null;
         try (Session session = openSession()) {
-            tx = session.beginTransaction();
-            NhatKiHoatDong log = NhatKiHoatDong.builder()
-                    .maNhanVien(maNhanVien)
-                    .hanhDong(hanhDong)
-                    .thoiGian(LocalDateTime.now())
-                    .build();
-            session.persist(log);
-            tx.commit();
+            Transaction tx = session.beginTransaction();
+            try {
+                NhatKiHoatDong log = NhatKiHoatDong.builder()
+                        .maNhanVien(maNhanVien)
+                        .hanhDong(hanhDong)
+                        .thoiGian(LocalDateTime.now())
+                        .build();
+                session.persist(log);
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                throw e;
+            }
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    // Bản ngắn: không cần mã nhân viên (khi nhóm chưa có đăng nhập).
+    // Ví dụ: new NhatKiHoatDongRepository().ghiNhatKy("Thanh toán hóa đơn #12");
+    public void ghiNhatKy(String hanhDong) {
+        ghiNhatKy(null, hanhDong);
     }
 }
