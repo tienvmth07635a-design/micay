@@ -28,7 +28,7 @@ public class NhatKiHoatDongServlet extends HttpServlet {
         request.setAttribute("dsNhatKy", dsNhatKy);
         request.setAttribute("keyword", keyword);
 
-        // Forward tới trang riêng, KHÔNG phải index.jsp
+        // Forward tới trang riêng của nhật ký, KHÔNG phải index.jsp
         request.getRequestDispatcher("/jsp/nhat_ki.jsp").forward(request, response);
     }
 
