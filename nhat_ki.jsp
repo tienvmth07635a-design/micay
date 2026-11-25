@@ -1,172 +1,193 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+
+<%-- ============================================================
+     ĐƯỜNG DẪN MENU: chỗ DUY NHẤT cần sửa link.
+     Mở JSP trang chủ của nhóm, copy đúng href từng mục rồi dán vào đây.
+     ============================================================ --%>
+<c:set var="urlTrangChu"  value="${ctx}/home"/>
+<c:set var="urlBan"       value="${ctx}/ban"/>
+<c:set var="urlSanPham"   value="${ctx}/san-pham"/>
+<c:set var="urlHoaDon"    value="${ctx}/hoa-don"/>
+<c:set var="urlChiTietHD" value="${ctx}/hoa-don-chi-tiet"/>
+<c:set var="urlKhachHang" value="${ctx}/khach-hang"/>
+<c:set var="urlKhuyenMai" value="${ctx}/khuyen-mai"/>
+<c:set var="urlVoucher"   value="${ctx}/voucher"/>
+<c:set var="urlNhanVien"  value="${ctx}/nhan-vien"/>
+<c:set var="urlQuanLy"    value="${ctx}/quan-ly"/>
+<c:set var="urlNhatKi"    value="${ctx}/nhat-ki"/>
+<c:set var="urlDangXuat"  value="${ctx}/dang-xuat"/>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nhật Ký Hoạt Động Hệ Thống</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
+        body { margin: 0; }
+        .mc-layout, .mc-layout * { box-sizing: border-box; }
+        .mc-layout {
+            display: flex; min-height: 100vh;
             font-family: "Segoe UI", Roboto, Arial, sans-serif;
-            background: #f3f4f8;
-            color: #222;
-            display: flex;
-            min-height: 100vh;
+            background: #f4f6fb; color: #1f2937;
         }
 
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 234px;
-            background: #1a237e;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0; bottom: 0; left: 0;
+        /* ===== MENU TRÁI ===== */
+        .mc-sidebar {
+            width: 204px; flex-shrink: 0;
+            background: linear-gradient(180deg, #1b2a94 0%, #0e1a70 100%);
+            color: #fff; display: flex; flex-direction: column;
+            position: sticky; top: 0; height: 100vh;
         }
-        .brand {
-            padding: 18px 16px;
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffd54f;
+        .mc-brand {
+            display: flex; align-items: center; gap: 8px;
+            padding: 16px 14px; font-size: 16px; font-weight: 700;
             border-bottom: 1px solid rgba(255,255,255,.12);
         }
-        .brand i { margin-right: 8px; color: #ffb300; }
-        .profile {
-            display: flex; align-items: center; gap: 10px;
-            padding: 14px 16px;
+        .mc-profile {
+            display: flex; align-items: center; gap: 10px; padding: 14px;
             border-bottom: 1px solid rgba(255,255,255,.12);
         }
-        .avatar-red {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: #e53950; display: flex; align-items: center; justify-content: center;
+        .mc-avatar-red {
+            width: 34px; height: 34px; border-radius: 50%; background: #e03e4e;
+            display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 13px;
         }
-        .profile .name { font-size: 13px; font-weight: 600; }
-        .profile .role { font-size: 11px; opacity: .7; }
-        .menu-title {
-            font-size: 11px; letter-spacing: .5px; text-transform: uppercase;
-            color: rgba(255,255,255,.55);
-            padding: 16px 16px 6px;
+        .mc-profile .mc-name { font-size: 14px; font-weight: 600; }
+        .mc-profile .mc-role { font-size: 11px; opacity: .7; }
+        .mc-menu { flex: 1; overflow-y: auto; padding: 6px; }
+        .mc-menu-title {
+            font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+            color: #a9b6ef; padding: 14px 8px 6px;
         }
-        .menu a {
-            display: flex; align-items: center; gap: 12px;
-            margin: 2px 16px; padding: 10px 12px;
-            color: #e8eaf6; text-decoration: none; font-size: 14px;
-            border-radius: 8px;
-        }
-        .menu a i { width: 18px; text-align: center; }
-        .menu a:hover { background: rgba(255,255,255,.1); }
-        .menu a.active { background: #3949ab; color: #fff; }
-        .logout { margin-top: auto; padding: 18px 16px; }
-        .logout a {
-            color: #ffd54f; text-decoration: none; font-size: 14px;
+        .mc-menu a {
             display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; margin: 2px 0; border-radius: 8px;
+            color: #e6ebff; text-decoration: none; font-size: 14px;
+        }
+        .mc-menu a:hover { background: rgba(255,255,255,.1); }
+        .mc-menu a.active { background: #2f5be6; color: #fff; font-weight: 600; }
+        .mc-ico { width: 20px; text-align: center; }
+        .mc-logout { border-top: 1px solid rgba(255,255,255,.12); padding: 14px; }
+        .mc-logout a {
+            display: flex; align-items: center; gap: 10px;
+            color: #e6ebff; text-decoration: none; font-size: 14px;
         }
 
         /* ===== NỘI DUNG ===== */
-        .main { margin-left: 234px; flex: 1; padding: 16px 20px; }
-        .topbar {
-            background: #fff; border-radius: 8px;
-            padding: 16px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        .mc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .mc-topbar {
+            background: #fff; border-bottom: 1px solid #e5e8f0;
+            height: 52px; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .topbar h1 { font-size: 18px; font-weight: 600; }
-        .topbar .user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555; }
-        .avatar-blue {
-            width: 34px; height: 34px; border-radius: 50%;
-            background: #1976d2; color: #fff;
-            display: flex; align-items: center; justify-content: center; font-weight: 700;
+        .mc-topbar h1 { font-size: 17px; font-weight: 600; margin: 0; }
+        .mc-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555; }
+        .mc-avatar-blue {
+            width: 30px; height: 30px; border-radius: 50%; background: #1a73e8; color: #fff;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
         }
-        .card {
-            background: #fff; border-radius: 8px;
-            padding: 22px 22px 28px; margin-top: 22px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        .mc-content { padding: 18px 24px; }
+        .mc-card {
+            background: #fff; border-radius: 8px; padding: 22px;
+            box-shadow: 0 1px 3px rgba(16,24,40,.08);
         }
-        .card h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        thead th {
+
+        /* ===== BẢNG NHẬT KÝ (hàng tiêu đề đen, 4 cột) ===== */
+        .nk-title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+        .nk-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .nk-table thead th {
             background: #1f2125; color: #fff;
             text-align: left; padding: 11px 8px; font-weight: 600;
         }
-        tbody td { padding: 10px 8px; }
-        tbody tr:nth-child(odd) { background: #f1f1f1; }
-        tbody tr:nth-child(even) { background: #fff; }
-        .empty { text-align: center; color: #888; padding: 20px; }
+        .nk-table tbody td { padding: 10px 8px; }
+        .nk-table tbody tr:nth-child(odd) { background: #f1f1f1; }
+        .nk-table tbody tr:nth-child(even) { background: #fff; }
+        .nk-empty { text-align: center; color: #888; padding: 20px; }
     </style>
 </head>
 <body>
 
-<!-- ===== SIDEBAR ===== -->
-<aside class="sidebar">
-    <div class="brand"><i class="fa-solid fa-fire-flame-curved"></i>Mì Cay Seoul 7 Cấp</div>
+<div class="mc-layout">
 
-    <div class="profile">
-        <div class="avatar-red">Q</div>
-        <div>
-            <div class="name">Quản Lý Cửa Hàng</div>
-            <div class="role">Admin</div>
+    <!-- ===== MENU TRÁI: đủ 11 mục như trang chủ của nhóm ===== -->
+    <aside class="mc-sidebar">
+        <div class="mc-brand"><span>🍜</span>Mì Cay Seoul 7 Cấp</div>
+
+        <div class="mc-profile">
+            <div class="mc-avatar-red">Q</div>
+            <div>
+                <div class="mc-name">Quản Lý Cửa Hàng</div>
+                <div class="mc-role">Admin</div>
+            </div>
+        </div>
+
+        <nav class="mc-menu">
+            <div class="mc-menu-title">Tổng quan &amp; bán hàng</div>
+            <a href="${urlTrangChu}"><span class="mc-ico">🏠</span>Trang chủ</a>
+            <a href="${urlBan}"><span class="mc-ico">🍽️</span>Bàn</a>
+            <a href="${urlSanPham}"><span class="mc-ico">🍜</span>Sản phẩm</a>
+            <a href="${urlHoaDon}"><span class="mc-ico">🧾</span>Hóa đơn</a>
+            <a href="${urlChiTietHD}"><span class="mc-ico">📋</span>Chi tiết hóa đơn</a>
+            <a href="${urlKhachHang}"><span class="mc-ico">👥</span>Khách hàng</a>
+
+            <div class="mc-menu-title">Ưu đãi, nhân sự &amp; hệ thống</div>
+            <a href="${urlKhuyenMai}"><span class="mc-ico">🏷️</span>Khuyến mãi</a>
+            <a href="${urlVoucher}"><span class="mc-ico">🎟️</span>Voucher</a>
+            <a href="${urlNhanVien}"><span class="mc-ico">👤</span>Nhân viên</a>
+            <a href="${urlQuanLy}"><span class="mc-ico">👔</span>Quản lý</a>
+            <a href="${urlNhatKi}" class="active"><span class="mc-ico">🕒</span>Nhật ký hoạt động</a>
+        </nav>
+
+        <div class="mc-logout">
+            <a href="${urlDangXuat}"><span class="mc-ico">↪</span>Đăng xuất</a>
+        </div>
+    </aside>
+
+    <!-- ===== NỘI DUNG ===== -->
+    <div class="mc-main">
+        <div class="mc-topbar">
+            <h1>Nhật Ký Hoạt Động Hệ Thống</h1>
+            <div class="mc-user">Xin chào, <b>Admin</b> <div class="mc-avatar-blue">A</div></div>
+        </div>
+
+        <div class="mc-content">
+            <div class="mc-card">
+                <h2 class="nk-title">Nhật ký hoạt động hệ thống</h2>
+
+                <table class="nk-table">
+                    <thead>
+                    <tr>
+                        <th style="width:10%">Mã NK</th>
+                        <th style="width:20%">Thời gian</th>
+                        <th style="width:25%">Nhân viên thực hiện</th>
+                        <th>Hành động chi tiết</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:choose>
+                        <c:when test="${empty dsNhatKy}">
+                            <tr><td colspan="4" class="nk-empty">Chưa có dữ liệu</td></tr>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="nk" items="${dsNhatKy}">
+                                <tr>
+                                    <td>#${nk.maNhatKi}</td>
+                                    <td>${nk.thoiGianFormatted}</td>
+                                    <td><c:out value="${nk.tenNhanVienHienThi}"/></td>
+                                    <td><c:out value="${nk.hanhDong}"/></td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="menu">
-        <div class="menu-title">Quản lý chung</div>
-        <a href="${pageContext.request.contextPath}/bao-cao"><i class="fa-solid fa-chart-line"></i>Báo cáo</a>
-        <a href="${pageContext.request.contextPath}/ban"><i class="fa-solid fa-utensils"></i>Bàn</a>
-        <a href="${pageContext.request.contextPath}/san-pham"><i class="fa-solid fa-bowl-food"></i>Mặt hàng</a>
-
-        <div class="menu-title">Nhân sự &amp; hệ thống</div>
-        <a href="${pageContext.request.contextPath}/nhan-vien"><i class="fa-solid fa-users"></i>Quản lí nhân viên</a>
-        <a href="${pageContext.request.contextPath}/nhat-ki" class="active"><i class="fa-solid fa-clock-rotate-left"></i>Nhật ký</a>
-        <a href="${pageContext.request.contextPath}/cai-dat"><i class="fa-solid fa-gear"></i>Cài đặt</a>
-    </div>
-
-    <div class="logout">
-        <a href="${pageContext.request.contextPath}/dang-xuat"><i class="fa-solid fa-right-from-bracket"></i>Đăng xuất</a>
-    </div>
-</aside>
-
-<!-- ===== NỘI DUNG ===== -->
-<div class="main">
-    <div class="topbar">
-        <h1>Nhật Ký Hoạt Động Hệ Thống</h1>
-        <div class="user">Xin chào, <b>Admin</b> <div class="avatar-blue">A</div></div>
-    </div>
-
-    <div class="card">
-        <h2>Nhật ký hoạt động hệ thống</h2>
-        <table>
-            <thead>
-            <tr>
-                <th style="width:10%">Mã NK</th>
-                <th style="width:20%">Thời gian</th>
-                <th style="width:25%">Nhân viên thực hiện</th>
-                <th>Hành động chi tiết</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:choose>
-                <c:when test="${empty dsNhatKy}">
-                    <tr><td colspan="4" class="empty">Chưa có dữ liệu</td></tr>
-                </c:when>
-                <c:otherwise>
-                    <c:forEach var="nk" items="${dsNhatKy}">
-                        <tr>
-                            <td>#${nk.maNhatKi}</td>
-                            <td>${nk.thoiGianFormatted}</td>
-                            <td><c:out value="${nk.tenNhanVienHienThi}"/></td>
-                            <td><c:out value="${nk.hanhDong}"/></td>
-                        </tr>
-                    </c:forEach>
-                </c:otherwise>
-            </c:choose>
-            </tbody>
-        </table>
-    </div>
 </div>
 
 </body>
