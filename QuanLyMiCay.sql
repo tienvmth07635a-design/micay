@@ -15,19 +15,30 @@ CREATE TABLE KHACH_HANG (
 );
 GO
 
--- 2. Bảng Quản Lý
+-- 2. Bảng Quản Lý (thêm thông tin & tài khoản cho 1 quản lý duy nhất)
 CREATE TABLE QUAN_LY (
     ma_quan_ly INT IDENTITY(1,1) PRIMARY KEY,
+    ten_quan_ly NVARCHAR(255),
+    so_dien_thoai VARCHAR(20),
+    trang_thai NVARCHAR(50),
+    email VARCHAR(100) UNIQUE,
+    mat_khau VARCHAR(255),
     ngay_nhan_chuc DATE,
     ma_nguoi_dung INT
 );
 GO
 
--- 3. Bảng Nhân Viên
+-- 3. Bảng Nhân Viên (thêm email, mat_khau để đăng nhập và lưu nhật ký)
 CREATE TABLE NHAN_VIEN (
     ma_nhan_vien INT IDENTITY(1,1) PRIMARY KEY,
+    ten_nhan_vien NVARCHAR(255),
+    so_dien_thoai VARCHAR(20),
     chuc_vu NVARCHAR(100),
-    trang_thai BIT,
+    tien_luong_gio DECIMAL(12, 2),
+    tinh_gio_lam FLOAT DEFAULT 0,
+    trang_thai NVARCHAR(50),
+    email VARCHAR(100) UNIQUE,
+    mat_khau VARCHAR(255),
     ma_nguoi_dung INT,
     ma_quan_ly INT,
     CONSTRAINT FK_NV_QuanLy FOREIGN KEY (ma_quan_ly) REFERENCES QUAN_LY(ma_quan_ly)
@@ -48,11 +59,9 @@ CREATE TABLE SAN_PHAM (
     ten_san_pham NVARCHAR(255) NOT NULL,
     gia_tien DECIMAL(12, 2) NOT NULL,
     anh_san_pham VARCHAR(500),
-    mo_ta NVARCHAR(MAX)
+    mo_ta NVARCHAR(MAX),
+    trang_thai NVARCHAR(50) NOT NULL DEFAULT N'Đang bán'
 );
-ALTER TABLE SAN_PHAM
-ADD trang_thai NVARCHAR(50) NOT NULL DEFAULT N'Đang bán';
-GO
 GO
 
 -- 6. Bảng Khuyến Mãi
@@ -125,4 +134,28 @@ CREATE TABLE NHAT_KI_HOAT_DONG (
     ma_nhan_vien INT,
     CONSTRAINT FK_NK_NhanVien FOREIGN KEY (ma_nhan_vien) REFERENCES NHAN_VIEN(ma_nhan_vien)
 );
+GO
+
+-- ============================================================
+-- DỮ LIỆU MẪU QUẢN LÝ, NHÂN VIÊN & NHẬT KÝ HOẠT ĐỘNG
+-- ============================================================
+
+-- 1 Quản lý duy nhất
+INSERT INTO QUAN_LY (ten_quan_ly, so_dien_thoai, trang_thai, email, mat_khau, ngay_nhan_chuc, ma_nguoi_dung)
+VALUES (N'Quản Lý Cửa Hàng', '0900000001', N'Đang làm việc', 'quanly@gmail.com', '123456', '2025-01-01', 1);
+GO
+
+DECLARE @maQL INT = (SELECT TOP 1 ma_quan_ly FROM QUAN_LY ORDER BY ma_quan_ly ASC);
+
+-- Nhân viên & bản ghi Quản lý để lưu Nhật ký hoạt động
+INSERT INTO NHAN_VIEN (ten_nhan_vien, so_dien_thoai, chuc_vu, tien_luong_gio, tinh_gio_lam, trang_thai, email, mat_khau, ma_nguoi_dung, ma_quan_ly)
+VALUES
+    (N'Quản Lý Cửa Hàng', '0900000001', N'Quản lý',   50000, 0, N'Đang làm việc', NULL,                 NULL,     1, @maQL),
+    (N'Nhân Viên Quán',   '0900000002', N'Nhân viên', 30000, 0, N'Đang làm việc', 'nhanvien@gmail.com', '123456', 2, @maQL);
+GO
+
+-- Dữ liệu mẫu Nhật ký hoạt động
+DECLARE @nv1 INT = (SELECT TOP 1 ma_nhan_vien FROM NHAN_VIEN ORDER BY ma_nhan_vien ASC);
+INSERT INTO NHAT_KI_HOAT_DONG (hanh_dong, ma_nhan_vien)
+VALUES (N'Khởi tạo hệ thống nhật ký hoạt động', @nv1);
 GO
