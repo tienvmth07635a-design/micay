@@ -2,11 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<%-- ============================================================
-     ĐƯỜNG DẪN MENU: chỗ DUY NHẤT cần sửa link.
-     Mở JSP trang chủ của nhóm, copy đúng href từng mục rồi dán vào đây.
-     ============================================================ --%>
-<c:set var="urlTrangChu"  value="${ctx}/home"/>
+<c:set var="urlTrangChu"  value="${ctx}/HomeServlet"/>
 <c:set var="urlBan"       value="${ctx}/ban"/>
 <c:set var="urlSanPham"   value="${ctx}/san-pham"/>
 <c:set var="urlHoaDon"    value="${ctx}/hoa-don"/>
@@ -33,8 +29,6 @@
             font-family: "Segoe UI", Roboto, Arial, sans-serif;
             background: #f4f6fb; color: #1f2937;
         }
-
-        /* ===== MENU TRÁI ===== */
         .mc-sidebar {
             width: 204px; flex-shrink: 0;
             background: linear-gradient(180deg, #1b2a94 0%, #0e1a70 100%);
@@ -53,7 +47,7 @@
         .mc-avatar-red {
             width: 34px; height: 34px; border-radius: 50%; background: #e03e4e;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 13px;
+            font-weight: 700; font-size: 13px; flex-shrink: 0;
         }
         .mc-profile .mc-name { font-size: 14px; font-weight: 600; }
         .mc-profile .mc-role { font-size: 11px; opacity: .7; }
@@ -75,8 +69,6 @@
             display: flex; align-items: center; gap: 10px;
             color: #e6ebff; text-decoration: none; font-size: 14px;
         }
-
-        /* ===== NỘI DUNG ===== */
         .mc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
         .mc-topbar {
             background: #fff; border-bottom: 1px solid #e5e8f0;
@@ -94,8 +86,6 @@
             background: #fff; border-radius: 8px; padding: 22px;
             box-shadow: 0 1px 3px rgba(16,24,40,.08);
         }
-
-        /* ===== BẢNG NHẬT KÝ (hàng tiêu đề đen, 4 cột) ===== */
         .nk-title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
         .nk-table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .nk-table thead th {
@@ -112,15 +102,14 @@
 
 <div class="mc-layout">
 
-    <!-- ===== MENU TRÁI: đủ 11 mục như trang chủ của nhóm ===== -->
     <aside class="mc-sidebar">
         <div class="mc-brand"><span>🍜</span>Mì Cay Seoul 7 Cấp</div>
 
         <div class="mc-profile">
-            <div class="mc-avatar-red">Q</div>
+            <div class="mc-avatar-red">${sessionScope.vaiTro == 'QUAN_LY' ? 'Q' : 'N'}</div>
             <div>
-                <div class="mc-name">Quản Lý Cửa Hàng</div>
-                <div class="mc-role">Admin</div>
+                <div class="mc-name"><c:out value="${sessionScope.tenHienThi}"/></div>
+                <div class="mc-role"><c:out value="${sessionScope.vaiTroHienThi}"/></div>
             </div>
         </div>
 
@@ -146,11 +135,13 @@
         </div>
     </aside>
 
-    <!-- ===== NỘI DUNG ===== -->
     <div class="mc-main">
         <div class="mc-topbar">
             <h1>Nhật Ký Hoạt Động Hệ Thống</h1>
-            <div class="mc-user">Xin chào, <b>Admin</b> <div class="mc-avatar-blue">A</div></div>
+            <div class="mc-user">
+                Xin chào, <b><c:out value="${sessionScope.tenHienThi}"/></b> (<c:out value="${sessionScope.vaiTroHienThi}"/>)
+                <div class="mc-avatar-blue">${sessionScope.vaiTro == 'QUAN_LY' ? 'Q' : 'N'}</div>
+            </div>
         </div>
 
         <div class="mc-content">
@@ -167,7 +158,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <%-- Các dòng này tự xuất hiện khi chức năng khác gọi ghiNhatKy(...) --%>
                     <c:choose>
                         <c:when test="${empty dsNhatKy}">
                             <tr><td colspan="4" class="nk-empty">Chưa có dữ liệu</td></tr>
